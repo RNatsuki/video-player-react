@@ -1,8 +1,8 @@
 {
-  "name": "react-video-player",
+  "name": "@rnatsuki/react-video-player",
   "private": false,
   "version": "0.0.1",
-  "main": "",
+  "main": ".",
   "scripts": {
     "dev": "rsbuild dev --open",
     "build": "rsbuild build",
