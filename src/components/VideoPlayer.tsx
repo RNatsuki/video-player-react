@@ -145,10 +145,20 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
 
   const showControls = () => {
     setControlsVisible(true);
-    if (controlsTimeout) clearTimeout(controlsTimeout);
+    if (controlsTimeout) {
+      clearTimeout(controlsTimeout);
+    }
+    // Reiniciamos el temporizador solo si estamos en pantalla completa
+    if (isFullScreen) {
+      setControlsTimeout(setTimeout(() => hideControls(), 3000));
+    }
   };
 
   const hideControls = () => {
+    if (isFullScreen) {
+      // Solo ocultamos en pantalla completa
+      setControlsVisible(false);
+    }
     // Iniciamos un nuevo timeout al intentar ocultar los controles.
     // Esto asegura que los controles solo se oculten después de 3 segundos sin actividad del ratón
     const newTimeout = setTimeout(() => {
