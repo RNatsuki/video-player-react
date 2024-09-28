@@ -1,5 +1,6 @@
 :root {
-  --transparent-used: rgba(0, 0, 0, 0.5); /* Transparencia para los controles */
+  --transparent-used: rgba(0, 0, 0, 0); /* Transparencia para los controles */
+  --transparent-hover: rgba(0, 0, 0, 0.5); /* Transparencia al pasar el mouse */
 }
 
 .video-container {
@@ -48,7 +49,7 @@ video {
 }
 
 .video-controls:hover {
-  background-color: rgba(0, 0, 0, 0.8); /* Cambia el fondo al pasar el mouse */
+  background-color: var(--transparent-hover); /* Cambia el fondo al pasar el mouse */
 }
 
 button {
@@ -102,7 +103,7 @@ button:hover {
 @media (fullscreen) {
   .video-controls {
     bottom: 10px; /* Ajuste en modo completo para que se vea bien */
-    background-color: rgba(0, 0, 0, 0.9); /* Fondo más oscuro en pantalla completa */
+    background-color: var(--transparent-used); /* Fondo más oscuro en pantalla completa */
   }
 
   .time-tooltip {

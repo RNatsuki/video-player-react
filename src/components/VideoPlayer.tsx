@@ -112,10 +112,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
 
   const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value);
-    if (!videoRef.current) return;
-    videoRef.current.volume = newVolume;
-    setVolume(newVolume);
-    setIsMuted(newVolume === 0);
+
+    // Si el video existe, ajustamos el volumen
+    if (videoRef.current) {
+      videoRef.current.volume = newVolume;
+      setVolume(newVolume);
+    }
+
+    // Desmuteamos el video si el nuevo volumen es mayor que 0
+    if (newVolume > 0 && isMuted) {
+      setIsMuted(false);
+      if (videoRef.current) videoRef.current.muted = false;
+    }
   };
 
   const seek = (time: number) => {
