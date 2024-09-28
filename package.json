@@ -1,7 +1,8 @@
 {
-  "name": "video-player",
-  "private": true,
-  "version": "1.0.0",
+  "name": "react-video-player",
+  "private": false,
+  "version": "0.0.1",
+  "main": "",
   "scripts": {
     "dev": "rsbuild dev --open",
     "build": "rsbuild build",
@@ -20,5 +21,9 @@
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "typescript": "^5.5.2"
+  },
+  "author": {
+    "name": "Rodrigo Ibarra",
+    "email": "ibarra2002x3@gmail.com"
   }
 }
