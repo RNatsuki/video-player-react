@@ -1,6 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faPause, faForward, faBackward, faVolumeUp, faVolumeMute, faExpand, faCompress } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect, useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPlay,
+  faPause,
+  faForward,
+  faBackward,
+  faVolumeUp,
+  faVolumeMute,
+  faExpand,
+  faCompress,
+} from "@fortawesome/free-solid-svg-icons";
 import "./VideoPlayer.css"; // Asegúrate de tener este archivo CSS para estilos
 
 interface VideoPlayerProps {
@@ -41,9 +50,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
       setDuration(video.duration);
     };
 
-    video.addEventListener('timeupdate', updateProgress);
-    video.addEventListener('loadedmetadata', updateDuration);
-    video.addEventListener('playing', () => setHasStarted(true)); // Marca que el video ha comenzado
+    video.addEventListener("timeupdate", updateProgress);
+    video.addEventListener("loadedmetadata", updateDuration);
+    video.addEventListener("playing", () => setHasStarted(true)); // Marca que el video ha comenzado
 
     const savedTime = localStorage.getItem("videoPlayerCurrentTime");
     if (savedTime) {
@@ -51,9 +60,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
     }
 
     return () => {
-      video.removeEventListener('timeupdate', updateProgress);
-      video.removeEventListener('loadedmetadata', updateDuration);
-      video.removeEventListener('playing', () => setHasStarted(true)); // Limpiar el evento al desmontar
+      video.removeEventListener("timeupdate", updateProgress);
+      video.removeEventListener("loadedmetadata", updateDuration);
+      video.removeEventListener("playing", () => setHasStarted(true)); // Limpiar el evento al desmontar
     };
   }, []);
 
@@ -63,7 +72,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
 
   useEffect(() => {
     const handleFullScreenChange = () => {
-      const fullScreenElement = document.fullscreenElement || (document as any).webkitFullscreenElement; // Safari
+      const fullScreenElement =
+        document.fullscreenElement || (document as any).webkitFullscreenElement; // Safari
       setIsFullScreen(fullScreenElement === videoRef.current);
       setControlsVisible(fullScreenElement === videoRef.current);
     };
@@ -73,7 +83,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
 
     return () => {
       document.removeEventListener("fullscreenchange", handleFullScreenChange);
-      document.removeEventListener("webkitfullscreenchange", handleFullScreenChange);
+      document.removeEventListener(
+        "webkitfullscreenchange",
+        handleFullScreenChange
+      );
     };
   }, []);
 
@@ -112,7 +125,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
 
   const handleForward = () => {
     if (!videoRef.current) return;
-    seek(Math.min(videoRef.current.currentTime + 10, videoRef.current.duration));
+    seek(
+      Math.min(videoRef.current.currentTime + 10, videoRef.current.duration)
+    );
   };
 
   const handleRewind = () => {
@@ -122,7 +137,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
 
   const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!videoRef.current || !progressBarRef.current) return;
-    const clickPosition = e.nativeEvent.offsetX / progressBarRef.current.offsetWidth;
+    const clickPosition =
+      e.nativeEvent.offsetX / progressBarRef.current.offsetWidth;
     const newTime = clickPosition * videoRef.current.duration;
     seek(newTime);
   };
@@ -130,13 +146,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
   const showControls = () => {
     setControlsVisible(true);
     if (controlsTimeout) clearTimeout(controlsTimeout);
-    setControlsTimeout(setTimeout(() => hideControls(), 3000));
   };
 
   const hideControls = () => {
-    if (!isFullScreen) {
-      setControlsVisible(false);
-    }
+    // Iniciamos un nuevo timeout al intentar ocultar los controles.
+    // Esto asegura que los controles solo se oculten después de 3 segundos sin actividad del ratón
+    const newTimeout = setTimeout(() => {
+      if (!isFullScreen) {
+        // Solo ocultamos los controles si no estamos en pantalla completa
+        setControlsVisible(false);
+      }
+    }, 3000);
+    setControlsTimeout(newTimeout);
   };
 
   const formatTime = (seconds: number): string => {
@@ -199,7 +220,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
         controls={false}
         onMouseOver={showControls}
         onMouseOut={hideControls}
-        onTimeUpdate={() => setCurrentTime((videoRef.current?.currentTime ?? 0))}
+        onTimeUpdate={() => setCurrentTime(videoRef.current?.currentTime ?? 0)}
         onPlaying={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
       />
@@ -232,7 +253,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
             onClick={handleProgressBarClick}
           >
             <div className="progress" style={{ width: `${progress}%` }}>
-              <div className="time-tooltip" style={{ transform: `translateX(-50%)`, left: `${progress}%` }}>
+              <div
+                className="time-tooltip"
+                style={{ transform: `translateX(-50%)`, left: `${progress}%` }}
+              >
                 {formatTime(currentTime)}
               </div>
             </div>
