@@ -1,6 +1,6 @@
 import "./App.css";
 import VideoPlayer from "./components/VideoPlayer";
-import video from "./videos/video.mp4";
+import video from "./videos/sofi.mp4";
 import thumbnail from "./thumbnails/image.png";
 const App = () => {
   return (
