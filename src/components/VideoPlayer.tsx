@@ -56,6 +56,24 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
     localStorage.setItem("videoPlayerCurrentTime", currentTime.toString());
   }, [currentTime]);
 
+  // Detectar cambios en pantalla completa
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      const fullScreenElement = document.fullscreenElement || (document as any).webkitFullscreenElement; // Safari
+      setIsFullScreen(fullScreenElement === videoRef.current);
+      // Mostrar controles si estamos en pantalla completa
+      setControlsVisible(fullScreenElement === videoRef.current);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullScreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullScreenChange); // Safari
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullScreenChange);
+      document.removeEventListener("webkitfullscreenchange", handleFullScreenChange);
+    };
+  }, []);
+
   const togglePlayPause = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -113,7 +131,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
   };
 
   const hideControls = () => {
-    setControlsVisible(false);
+    if (!isFullScreen) { // Oculta controles solo si no está en pantalla completa
+      setControlsVisible(false);
+    }
   };
 
   const formatTime = (seconds: number): string => {
@@ -127,29 +147,31 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
   };
 
   const toggleFullScreen = () => {
-    if (!videoRef.current) return;
-    if (!isFullScreen) {
-      if (videoRef.current.requestFullscreen) {
-        videoRef.current.requestFullscreen();
-      } else if ((videoRef.current as any).webkitRequestFullscreen) { // Safari
-        (videoRef.current as any).webkitRequestFullscreen();
-      } else if ((videoRef.current as any).mozRequestFullScreen) { // Firefox
-        (videoRef.current as any).mozRequestFullScreen();
-      } else if ((videoRef.current as any).msRequestFullscreen) { // IE/Edge
-        (videoRef.current as any).msRequestFullscreen();
+    const videoContainer = videoRef.current?.parentElement; // Obtenemos el contenedor del video.
+
+    if (!document.fullscreenElement && videoContainer) { // Si no estamos en pantalla completa
+      if (videoContainer.requestFullscreen) { // Método estándar
+        videoContainer.requestFullscreen();
+      } else if (videoContainer.mozRequestFullScreen) { // Firefox
+        videoContainer.mozRequestFullScreen();
+      } else if (videoContainer.webkitRequestFullscreen) { // Chrome, Safari y Opera
+        videoContainer.webkitRequestFullscreen();
+      } else if (videoContainer.msRequestFullscreen) { // Internet Explorer y Edge
+        videoContainer.msRequestFullscreen();
       }
-    } else {
-      if (document.exitFullscreen) {
+      setIsFullScreen(true);
+    } else { // Si ya estamos en pantalla completa
+      if (document.exitFullscreen) { // Método estándar
         document.exitFullscreen();
-      } else if ((document as any).webkitExitFullscreen) {
-        (document as any).webkitExitFullscreen();
-      } else if ((document as any).mozExitFullScreen) {
-        (document as any).mozExitFullScreen();
-      } else if ((document as any).msExitFullscreen) {
-        (document as any).msExitFullscreen();
+      } else if (document.mozCancelFullScreen) { // Firefox
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) { // Chrome, Safari y Opera
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { // Internet Explorer y Edge
+        document.msExitFullscreen();
       }
+      setIsFullScreen(false);
     }
-    setIsFullScreen(!isFullScreen);
   };
 
   return (
@@ -170,11 +192,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, thumbnail }) => {
         ref={videoRef}
         src={src}
         className="video-element"
+        controls={false} // Desactiva los controles predeterminados
         onMouseOver={showControls}
         onMouseOut={hideControls}
         onTimeUpdate={() => setCurrentTime((videoRef.current?.currentTime ?? 0))}
-        onPlaying={() => setIsPlaying(true)} // Update state when video is playing
-        onPause={() => setIsPlaying(false)} // Update state when video is paused
+        onPlaying={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
       />
       {controlsVisible && (
         <div className="video-controls">

@@ -1,74 +1,56 @@
-/* Crea Variables */
 :root {
-  --transparent-used: rgba(0, 0, 0, 0);
+  --transparent-used: rgba(0, 0, 0, 0.5); /* Transparencia para los controles */
 }
 
 .video-container {
   position: relative;
-  width: 100%; /* Asegura que el contenedor sea completamente ancho */
-  max-width: 800px; /* Puedes ajustar este ancho máximo según sea necesario */
-  margin: auto; /* Centra el contenedor si es más pequeño que el viewport */
-  background-color: black; /* Fondo negro para áreas no cubiertas por el video */
-  overflow: hidden; /* Asegura que todo el contenido se contenga dentro */
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+  background-color: black;
+  overflow: hidden;
 }
 
-
 .video-element, .video-thumbnail {
-  width: 100%; /* Se adapta al ancho del contenedor */
-  height: 100%; /* Mantiene la proporción y llena el espacio verticalmente */
-  object-fit: cover; /* Ajusta la imagen para cubrir el espacio disponible */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
-  margin: auto; /* Centrar el video y el thumbnail en su contenedor */
+  margin: auto;
 }
 
 .video-thumbnail {
   position: absolute;
   top: 0;
   left: 0;
-  cursor: pointer; /* Cambia el cursor a un puntero para indicar que el thumbnail es clickeable */
+  cursor: pointer;
 }
 
-/* Establece el color de fondo y el color de texto predeterminado */
-
-/* Asegúrate de que el video se comporte como contenedor */
-/* Ajusta el tamaño del video a su contenedor */
 video {
-  width: 100%; /* Se adapta al ancho del contenedor */
-  height: auto; /* Mantiene la proporción */
+  width: 100%;
+  height: auto;
   display: block;
-  margin: auto; /* Centrar el video en su contenedor */
-}
-
-/* Ajustar el contenedor de controles dentro del video */
-.video-player-container {
-  position: relative;
-  width: 100%; /* Asegura que el contenedor sea completamente ancho */
-  max-width: 800px; /* Ancho máximo para el video */
-  margin: 0 auto; /* Centra el contenedor */
-  overflow: hidden; /* Evita cualquier desbordamiento fuera del contenedor */
-}
-
-.video-player {
-  display: block;
-  width: 100%; /* Asegura que el video se extienda a todo el ancho */
-  height: auto; /* Mantiene la relación de aspecto */
-  max-width: 800px; /* Ancho máximo como su contenedor */
-  margin: 0 auto; /* Centra el video si es necesario */
+  margin: auto;
 }
 
 .video-controls {
   position: absolute;
-  bottom: 0; /* Coloca los controles en la parte inferior del contenedor del video */
+  bottom: 0;
   left: 0;
-  right: 0; /* Esta configuración asegura que los controles se extiendan en todo el ancho */
+  right: 0;
   display: flex;
-  justify-content: space-between; /* Ajusta según tu diseño */
-  align-items: center; /* Ajusta según tu diseño */
-  padding: 10px; /* Ajusta según tu diseño */
-  background-color: var(--transparent-used); /* Fondo semitransparente */
-  color: #fff; /* Texto en blanco */
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: var(--transparent-used);
+  color: #fff;
+  transition: background-color 0.2s ease; /* Transición suave al mostrar/ocultar controles */
 }
-/* Botón de reproducción/pausa */
+
+.video-controls:hover {
+  background-color: rgba(0, 0, 0, 0.8); /* Cambia el fondo al pasar el mouse */
+}
+
 button {
   background-color: transparent;
   border: none;
@@ -77,7 +59,7 @@ button {
   padding: 5px 10px;
   cursor: pointer;
   transition: transform 0.2s ease;
-  width: 40px; /* Ancho fijo */
+  width: 40px;
   text-align: center;
 }
 
@@ -85,21 +67,6 @@ button:hover {
   transform: scale(1.2);
 }
 
-/* Asegúrate de que el ícono esté centrado y sea clickeable */
-.video-controls {
-  position: absolute;
-  bottom: 0; /* Coloca los controles en la parte inferior del contenedor del video */
-  left: 0;
-  right: 0; /* Esta configuración asegura que los controles se extiendan en todo el ancho */
-  display: flex;
-  justify-content: space-between; /* Ajusta según tu diseño */
-  align-items: center; /* Ajusta según tu diseño */
-  padding: 10px; /* Ajusta según tu diseño */
-  background-color: var(--transparent-used); /* Fondo semitransparente */
-  color: #fff; /* Texto en blanco */
-}
-
-/* Barra de progreso */
 .progress-bar {
   flex-grow: 1;
   height: 5px;
@@ -115,54 +82,30 @@ button:hover {
   width: 0; /* Inicialmente, la barra de progreso está vacía */
 }
 
-.current-time {
-  display: none; /* Oculta el tiempo actual si no es necesario */
-}
-
 .duration-time {
-  color: #ffffff; /* Cambia el color según tu preferencia */
-  font-size: 14px; /* Tamaño de fuente que sea visible */
-  margin-left: 10px; /* Espacio a la izquierda para separarlo de otros elementos */
+  color: #ffffff;
+  font-size: 14px;
+  margin-left: 10px;
 }
 
-/* Indicador de tiempo */
-.time-indicator {
-  position: absolute;
-  bottom: 100%; /* Just above the progress bar */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  pointer-events: none; /* Para evitar que bloquee la interacción con la barra de progreso */
-  transform: translateX(-50%);
-  transition: left 0.1s; /* Animación suave para la posición */
-}
-
-.time-text {
-  background-color: var(--transparent-used);
-  color: #fff;
-  padding: 2px 5px;
-  border-radius: 3px;
-  font-size: 12px;
-  margin-bottom: 2px; /* Espacio entre el cuadro y la flecha */
-}
-
-.arrow-down {
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid var(--transparent-used); /* Misma coloración que el cuadro */
-}
-
-
-/* Añade a tu CSS existente o ajusta según sea necesario */
 .time-tooltip {
   position: absolute;
-  bottom: 100%; /* Posiciona correctamente el tooltip encima de la barra de progreso */
+  bottom: 100%;
   background-color: rgba(0, 0, 0, 0.75);
   color: white;
   padding: 2px 5px;
   border-radius: 3px;
   white-space: nowrap;
-  pointer-events: none; /* Evita que el tooltip interfiera con otros eventos del mouse */
+  pointer-events: none;
+}
+
+@media (fullscreen) {
+  .video-controls {
+    bottom: 10px; /* Ajuste en modo completo para que se vea bien */
+    background-color: rgba(0, 0, 0, 0.9); /* Fondo más oscuro en pantalla completa */
+  }
+
+  .time-tooltip {
+    bottom: 110%; /* Ajuste para que la tooltip esté más arriba en modo completo */
+  }
 }
