@@ -1,13 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faPause, faForward, faBackward, faVolumeUp, faVolumeMute } from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faPause, faForward, faBackward, faVolumeUp, faVolumeMute, faExpand, faCompress } from '@fortawesome/free-solid-svg-icons';
 import "./VideoPlayer.css"; // Asegúrate de tener este archivo CSS para estilos
 
 interface VideoPlayerProps {
   src: string;
+  width?: number;
+  height?: number;
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ src }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -18,6 +21,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src }) => {
   const [progress, setProgress] = useState(0);
   const [controlsVisible, setControlsVisible] = useState(true);
   const [controlsTimeout, setControlsTimeout] = useState<any>(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -51,6 +55,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src }) => {
   useEffect(() => {
     localStorage.setItem("videoPlayerCurrentTime", currentTime.toString());
   }, [currentTime]);
+
+  const handleFullScreenChange = useCallback(() => {
+    const isFullScreenNow = document.fullscreenElement === containerRef.current;
+    setIsFullScreen(isFullScreenNow);
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullScreenChange);
+    };
+  }, [handleFullScreenChange]);
 
   const togglePlayPause = () => {
     const video = videoRef.current;
@@ -105,35 +122,54 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src }) => {
   const showControls = () => {
     setControlsVisible(true);
     if (controlsTimeout) clearTimeout(controlsTimeout);
-    setControlsTimeout(setTimeout(() => hideControls(), 3000));
+    setControlsTimeout(setTimeout(() => setControlsVisible(false), 3000));
   };
 
-  const hideControls = () => {
-    setControlsVisible(false);
+  const toggleFullScreen = () => {
+    if (!containerRef.current) return;
+
+    if (!document.fullscreenElement) {
+      if (containerRef.current.requestFullscreen) {
+        containerRef.current.requestFullscreen();
+      } else if (containerRef.current.webkitRequestFullscreen) { // Safari
+        containerRef.current.webkitRequestFullscreen();
+      } else if (containerRef.current.mozRequestFullScreen) { // Firefox
+        containerRef.current.mozRequestFullScreen();
+      } else if (containerRef.current.msRequestFullscreen) { // IE/Edge
+        containerRef.current.msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) { // Safari
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) { // Firefox
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) { // IE/Edge
+        document.msExitFullscreen();
+      }
+    }
   };
 
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${padZero(minutes)}:${padZero(secs)}`;
-  };
-
-  const padZero = (num: number): string => {
-    return num < 10 ? `0${num}` : num.toString();
+    return `${minutes < 10 ? '0' : ''}${minutes}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
   return (
     <div
+      ref={containerRef}
       className="video-container"
       onMouseMove={showControls}
-      onMouseLeave={hideControls}
+      onMouseLeave={() => setControlsVisible(false)}
     >
       <video
         ref={videoRef}
         src={src}
         className="video-element"
         onMouseOver={showControls}
-        onMouseOut={hideControls}
+        onMouseOut={() => setControlsVisible(false)}
         onTimeUpdate={() => setCurrentTime((videoRef.current?.currentTime ?? 0))}
       />
       {controlsVisible && (
@@ -164,14 +200,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src }) => {
             className="progress-bar"
             onClick={handleProgressBarClick}
           >
-            <div className="progress" style={{ width: `${progress}%` }}>
-              <div className="time-tooltip" style={{ transform: `translateX(-50%)`, left: `${progress}%` }}>
-                {formatTime(currentTime)}
-              </div>
-            </div>
+            <div className="progress" style={{ width: `${progress}%` }}></div>
           </div>
           <span className="current-time">{formatTime(currentTime)}</span>
           <span className="duration-time">{formatTime(duration)}</span>
+          <button onClick={toggleFullScreen}>
+            <FontAwesomeIcon icon={isFullScreen ? faCompress : faExpand} />
+          </button>
         </div>
       )}
     </div>
