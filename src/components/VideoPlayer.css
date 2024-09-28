@@ -9,6 +9,23 @@
   max-width: 800px; /* Puedes ajustar este ancho máximo según sea necesario */
   margin: auto; /* Centra el contenedor si es más pequeño que el viewport */
   background-color: black; /* Fondo negro para áreas no cubiertas por el video */
+  overflow: hidden; /* Asegura que todo el contenido se contenga dentro */
+}
+
+
+.video-element, .video-thumbnail {
+  width: 100%; /* Se adapta al ancho del contenedor */
+  height: 100%; /* Mantiene la proporción y llena el espacio verticalmente */
+  object-fit: cover; /* Ajusta la imagen para cubrir el espacio disponible */
+  display: block;
+  margin: auto; /* Centrar el video y el thumbnail en su contenedor */
+}
+
+.video-thumbnail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer; /* Cambia el cursor a un puntero para indicar que el thumbnail es clickeable */
 }
 
 /* Establece el color de fondo y el color de texto predeterminado */
@@ -69,10 +86,17 @@ button:hover {
 }
 
 /* Asegúrate de que el ícono esté centrado y sea clickeable */
-button i {
-  pointer-events: none;
-  display: inline-block;
-  width: 100%; /* Hacer que el ícono ocupe todo el ancho del botón */
+.video-controls {
+  position: absolute;
+  bottom: 0; /* Coloca los controles en la parte inferior del contenedor del video */
+  left: 0;
+  right: 0; /* Esta configuración asegura que los controles se extiendan en todo el ancho */
+  display: flex;
+  justify-content: space-between; /* Ajusta según tu diseño */
+  align-items: center; /* Ajusta según tu diseño */
+  padding: 10px; /* Ajusta según tu diseño */
+  background-color: var(--transparent-used); /* Fondo semitransparente */
+  color: #fff; /* Texto en blanco */
 }
 
 /* Barra de progreso */
